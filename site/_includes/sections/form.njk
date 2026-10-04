@@ -1,0 +1,74 @@
+<section class="section section--alt" id="form" aria-labelledby="form-title">
+  <div class="container container--narrow">
+    <h2 id="form-title">{{ site.form.title }}</h2>
+    <p>{{ site.form.subtitle }}</p>
+
+    {#- Сообщения для отправки без JS: сервер перенаправит на #form-error или #form-fail, CSS покажет блок через :target #}
+    <div class="alert" id="form-error" role="alert">Проверьте поля формы и отправьте заявку ещё раз.</div>
+    <div class="alert" id="form-fail" role="alert">
+      {{ site.form.failText }} <a href="tel:{{ site.contact.phone }}">{{ site.contact.phoneDisplay }}</a>
+    </div>
+
+    <form class="lead-form" action="{{ build.formEndpoint or site.form.endpoint }}" method="post" novalidate data-lead-form>
+      <div class="field">
+        <label for="f-name">Имя *</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="50" aria-describedby="f-name-error">
+        <p class="field__error" id="f-name-error"></p>
+      </div>
+      <div class="field">
+        <label for="f-phone">Телефон *</label>
+        <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="18"
+               placeholder="+7 (999) 123-45-67" aria-describedby="f-phone-error">
+        <p class="field__error" id="f-phone-error"></p>
+      </div>
+      <div class="field">
+        <label for="f-car">Марка и модель авто</label>
+        <input id="f-car" name="car" type="text" maxlength="60" placeholder="Например, Kia Rio" aria-describedby="f-car-error">
+        <p class="field__error" id="f-car-error"></p>
+      </div>
+      <div class="field">
+        <label for="f-service">Услуга *</label>
+        <select id="f-service" name="service" required aria-describedby="f-service-error">
+          <option value="">Выберите услугу</option>
+          {%- for service in site.services %}
+          <option value="{{ service.id }}">{{ service.name }}</option>
+          {%- endfor %}
+          <option value="other">{{ site.form.otherOption }}</option>
+        </select>
+        <p class="field__error" id="f-service-error"></p>
+      </div>
+      <div class="field">
+        <label for="f-when">Удобное время</label>
+        <input id="f-when" name="when" type="text" maxlength="60" placeholder="Например, завтра после 18:00" aria-describedby="f-when-error">
+        <p class="field__error" id="f-when-error"></p>
+      </div>
+      <div class="field">
+        <label for="f-comment">Комментарий</label>
+        <textarea id="f-comment" name="comment" rows="3" maxlength="500" aria-describedby="f-comment-error"></textarea>
+        <p class="field__error" id="f-comment-error"></p>
+      </div>
+
+      {#- Ловушка для ботов: поле спрятано от людей и скринридеров, боты его заполняют #}
+      <div class="hp" aria-hidden="true">
+        <label for="f-website">Сайт</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      {#- Время открытия формы — заполняет form.js #}
+      <input type="hidden" name="ts" value="">
+
+      <div class="field field--check">
+        <input id="f-consent" name="consent" type="checkbox" value="yes" required aria-describedby="f-consent-error">
+        <label for="f-consent">Согласен на <a href="/privacy/">обработку персональных данных</a> *</label>
+        <p class="field__error" id="f-consent-error"></p>
+      </div>
+
+      <button class="btn btn--primary btn--lg btn--block" type="submit">Отправить заявку</button>
+      <p class="form__status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="form-success" hidden tabindex="-1">
+      <h3>{{ site.form.successTitle }}</h3>
+      <p>{{ site.form.successText }}</p>
+    </div>
+  </div>
+</section>

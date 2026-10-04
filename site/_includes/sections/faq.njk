@@ -1,0 +1,12 @@
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="container container--narrow">
+    <h2 id="faq-title">{{ site.sectionTitles.faq }}</h2>
+    {#- details/summary раскрываются без JavaScript #}
+    {%- for item in site.faq %}
+    <details class="faq">
+      <summary>{{ item.q }}</summary>
+      <p>{{ item.a }}</p>
+    </details>
+    {%- endfor %}
+  </div>
+</section>

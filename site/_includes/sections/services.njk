@@ -1,0 +1,15 @@
+<section class="section" id="services" aria-labelledby="services-title">
+  <div class="container">
+    <h2 id="services-title">{{ site.sectionTitles.services }}</h2>
+    <ul class="cards">
+      {%- for service in site.services %}
+      <li class="card">
+        <h3 class="card__title">{{ service.name }}</h3>
+        <p class="card__price">{{ service.price }}</p>
+        {%- if service.time %}<p class="card__meta">{{ service.time }}</p>{% endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+    <p class="note">{{ site.servicesNote }}</p>
+  </div>
+</section>

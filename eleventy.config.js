@@ -11,6 +11,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     'site/assets': 'assets',
     'function/core/phone.js': 'assets/js/phone.js',
+    'site/favicon.svg': 'favicon.svg',
   });
 
   // Полный адрес страницы: absUrl('/privacy/', 'https://site.ru/landing-demo/') → https://site.ru/landing-demo/privacy/

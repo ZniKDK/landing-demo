@@ -1,0 +1,13 @@
+<section class="section" id="steps" aria-labelledby="steps-title">
+  <div class="container">
+    <h2 id="steps-title">{{ site.sectionTitles.steps }}</h2>
+    <ol class="steps">
+      {%- for step in site.steps %}
+      <li class="step">
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.text }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </div>
+</section>

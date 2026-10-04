@@ -1,4 +1,7 @@
 ---
 layout: base.njk
 ---
-<h1>{{ site.hero.title }}</h1>
+{#- Секции подключаются в порядке из site.sections — так любую можно убрать или переставить без правки шаблонов #}
+{%- for section in site.sections %}
+{% include "sections/" + section + ".njk" %}
+{%- endfor %}

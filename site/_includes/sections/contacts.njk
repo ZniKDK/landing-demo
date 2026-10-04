@@ -1,0 +1,13 @@
+{% from "partials/icons.njk" import icon %}
+<section class="section" id="contacts" aria-labelledby="contacts-title">
+  <div class="container">
+    <h2 id="contacts-title">{{ site.sectionTitles.contacts }}</h2>
+    <div class="contacts">
+      <p class="contacts__row">{{ icon('pin', 22) }}<span>{{ site.contact.city }}, {{ site.contact.street }}</span></p>
+      <p class="contacts__row">{{ icon('clock', 22) }}<span>{{ site.contact.hours }}</span></p>
+      <p class="contacts__row">{{ icon('phone', 22) }}<a href="tel:{{ site.contact.phone }}">{{ site.contact.phoneDisplay }}</a></p>
+      {#- Ссылка вместо встроенной карты: iframe карты тяжёлый и тормозит загрузку на телефоне #}
+      <a class="btn btn--outline" href="{{ site.contact.mapUrl }}" target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
+    </div>
+  </div>
+</section>

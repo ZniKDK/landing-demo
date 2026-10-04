@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "start": "eleventy --serve",
+    "start": "eleventy --serve --port=8090",
     "build": "eleventy",
     "test": "node --test",
     "sync:services": "node scripts/sync-services.mjs",

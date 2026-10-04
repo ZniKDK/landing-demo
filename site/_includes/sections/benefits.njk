@@ -1,0 +1,15 @@
+{% from "partials/icons.njk" import icon %}
+<section class="section section--alt" id="benefits" aria-labelledby="benefits-title">
+  <div class="container">
+    <h2 id="benefits-title">{{ site.sectionTitles.benefits }}</h2>
+    <ul class="features">
+      {%- for item in site.benefits %}
+      <li class="feature">
+        <span class="feature__icon">{{ icon(item.icon) }}</span>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.text }}</p>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>

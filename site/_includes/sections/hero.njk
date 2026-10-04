@@ -1,0 +1,23 @@
+<section class="hero" id="hero" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <h1 id="hero-title">{{ site.hero.title }}</h1>
+      <p class="hero__subtitle">{{ site.hero.subtitle }}</p>
+      <a class="btn btn--primary btn--lg" href="#form">{{ site.hero.cta }}</a>
+      <ul class="hero__facts">
+        {%- for fact in site.hero.facts %}
+        <li>{{ fact }}</li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- if site.hero.image %}
+    <div class="hero__media">
+      {#- Первое фото грузится сразу (fetchpriority), браузер сам выбирает размер по ширине экрана #}
+      <img src="/{{ site.hero.image.src }}-800.webp"
+           srcset="/{{ site.hero.image.src }}-800.webp 800w, /{{ site.hero.image.src }}-1600.webp 1600w"
+           sizes="(min-width: 1024px) 50vw, 100vw"
+           width="800" height="600" alt="{{ site.hero.image.alt }}" fetchpriority="high" decoding="async">
+    </div>
+    {%- endif %}
+  </div>
+</section>

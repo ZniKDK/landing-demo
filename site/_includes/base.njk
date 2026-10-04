@@ -7,9 +7,26 @@
   {%- set pageDescription = description or site.seo.description %}
   <title>{{ pageTitle }}</title>
   <meta name="description" content="{{ pageDescription }}">
+  <meta name="theme-color" content="{{ site.theme.primary }}">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  {#- Цвета бренда из site.json → CSS-переменные. Под нового клиента меняется только site.json #}
+  <style>
+    :root {
+      --c-primary: {{ site.theme.primary }};
+      --c-primary-text: {{ site.theme.primaryText }};
+      --c-dark: {{ site.theme.dark }};
+      --c-bg: {{ site.theme.bg }};
+      --c-bg-alt: {{ site.theme.bgAlt }};
+      --c-text: {{ site.theme.text }};
+      --c-muted: {{ site.theme.muted }};
+    }
+  </style>
 </head>
 <body>
-  <div class="demo-notice" role="note">{{ site.demoNotice }}</div>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  {% include "partials/demo-notice.njk" %}
+  {% include "partials/header.njk" %}
   <main id="main">{{ content | safe }}</main>
+  {% include "partials/footer.njk" %}
 </body>
 </html>

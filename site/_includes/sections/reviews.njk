@@ -1,0 +1,15 @@
+<section class="section section--alt" id="reviews" aria-labelledby="reviews-title">
+  <div class="container">
+    <h2 id="reviews-title">{{ site.sectionTitles.reviews }}</h2>
+    <ul class="reviews">
+      {%- for review in site.reviews %}
+      <li>
+        <figure class="review">
+          <blockquote><p>{{ review.text }}</p></blockquote>
+          <figcaption>{{ review.name }}, {{ review.car }}</figcaption>
+        </figure>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
