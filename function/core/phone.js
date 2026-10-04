@@ -52,7 +52,10 @@
    */
   function formatPhoneMask(raw) {
     var digits = digitsOnly(raw);
-    if (digits[0] === '7' || digits[0] === '8') {
+    // Ведущие 7 или 8 — это код страны, а не часть номера, кроме одного случая:
+    // вставили ровно 10 цифр без «+7» — тогда 8 это начало кода города (812, 846)
+    var pastedWithoutCountryCode = digits.length === 10 && !/^\s*\+/.test(String(raw));
+    if ((digits[0] === '7' || digits[0] === '8') && !pastedWithoutCountryCode) {
       digits = digits.slice(1);
     }
     digits = digits.slice(0, 10);

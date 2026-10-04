@@ -39,3 +39,12 @@ test('formatPhoneMask строит маску по мере ввода', () => {
 test('formatPhoneMask не мешает стирать: "+7 (999)" → "+7 (999"', () => {
   assert.equal(formatPhoneMask('+7 (999)'), '+7 (999');
 });
+
+// Ревью, Minor 2: вставили 10 цифр без кода страны, а код города начинается с 8 (812, 846)
+test('formatPhoneMask не отрезает 8 у 10-значного номера без кода страны', () => {
+  assert.equal(formatPhoneMask('8121234567'), '+7 (812) 123-45-67');
+  assert.equal(formatPhoneMask('846 212 34 56'), '+7 (846) 212-34-56');
+  // а при вводе с «восьмёркой» по-русски — отрезает
+  assert.equal(formatPhoneMask('88121234567'), '+7 (812) 123-45-67');
+  assert.equal(formatPhoneMask('+7 (812) 123-45-6'), '+7 (812) 123-45-6');
+});
