@@ -61,3 +61,11 @@ test('служебные страницы: политика, спасибо (noi
   assert.ok(sitemap.includes(`<loc>${site.url}privacy/</loc>`));
   assert.ok(!sitemap.includes('thanks'));
 });
+
+// Ревью, Important 1: на Pages HtmlBasePlugin превращает action="" в action=".",
+// и form.js не узнаёт демо-режим. Без адреса функции атрибута action быть не должно.
+test('форма без адреса функции не получает атрибут action', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  const formTag = html.match(/<form[^>]*data-lead-form[^>]*>/)[0];
+  assert.ok(!/\saction=/.test(formTag), formTag);
+});

@@ -9,7 +9,10 @@
       {{ site.form.failText }} <a href="tel:{{ site.contact.phone }}">{{ site.contact.phoneDisplay }}</a>
     </div>
 
-    <form class="lead-form" action="{{ build.formEndpoint or site.form.endpoint }}" method="post" novalidate data-lead-form>
+    {#- Пока адрес функции не задан, атрибута action нет: form.js включит демо-режим.
+        Пустой action="" плагин базового пути превратил бы в "." и форма ушла бы на сам сайт #}
+    {%- set endpoint = build.formEndpoint or site.form.endpoint %}
+    <form class="lead-form" {% if endpoint %}action="{{ endpoint }}" {% endif %}method="post" novalidate data-lead-form>
       <div class="field">
         <label for="f-name">Имя *</label>
         <input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="50" aria-describedby="f-name-error">
