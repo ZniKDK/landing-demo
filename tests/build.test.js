@@ -38,3 +38,26 @@ test('каждая секция исчезает, если убрать её и�
   const html = pageByUrl(await buildPages(), '/').content;
   assert.equal((html.match(/<section /g) || []).length, site.sections.length);
 });
+
+test('SEO главной: canonical, Open Graph, JSON-LD AutoRepair', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  assert.ok(html.includes(`<link rel="canonical" href="${site.url}">`));
+  assert.ok(html.includes('property="og:title"'));
+  assert.ok(html.includes('property="og:locale" content="ru_RU"'));
+  const ld = html.match(/<script type="application\/ld\+json">(.+?)<\/script>/s);
+  assert.ok(ld, 'нет JSON-LD');
+  const data = JSON.parse(ld[1]);
+  assert.equal(data['@type'], 'AutoRepair');
+  assert.equal(data.telephone, site.contact.phone);
+});
+
+test('служебные страницы: политика, спасибо (noindex), robots, sitemap', async () => {
+  const pages = await buildPages();
+  assert.ok(pageByUrl(pages, '/privacy/').content.includes('152-ФЗ'));
+  assert.ok(pageByUrl(pages, '/thanks/').content.includes('name="robots" content="noindex"'));
+  assert.ok(pageByUrl(pages, '/robots.txt').content.includes(`Sitemap: ${site.url}sitemap.xml`));
+  const sitemap = pageByUrl(pages, '/sitemap.xml').content;
+  assert.ok(sitemap.includes(`<loc>${site.url}</loc>`));
+  assert.ok(sitemap.includes(`<loc>${site.url}privacy/</loc>`));
+  assert.ok(!sitemap.includes('thanks'));
+});

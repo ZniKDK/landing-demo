@@ -7,6 +7,25 @@
   {%- set pageDescription = description or site.seo.description %}
   <title>{{ pageTitle }}</title>
   <meta name="description" content="{{ pageDescription }}">
+  {%- set canonical = page.url | absUrl(site.url) %}
+  <link rel="canonical" href="{{ canonical }}">
+  {%- if noindex %}
+  <meta name="robots" content="noindex">
+  {%- endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{{ pageTitle }}">
+  <meta property="og:description" content="{{ pageDescription }}">
+  <meta property="og:url" content="{{ canonical }}">
+  {%- if site.seo.ogImage %}
+  <meta property="og:image" content="{{ site.seo.ogImage | absUrl(site.url) }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {%- endif %}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  {%- if page.url == '/' %}
+  <script type="application/ld+json">{{ jsonld | dump | safe }}</script>
+  {%- endif %}
   <meta name="theme-color" content="{{ site.theme.primary }}">
   <link rel="stylesheet" href="/assets/css/main.css">
   {#- Цвета бренда из site.json → CSS-переменные. Под нового клиента меняется только site.json #}
@@ -28,5 +47,9 @@
   {% include "partials/header.njk" %}
   <main id="main">{{ content | safe }}</main>
   {% include "partials/footer.njk" %}
+  {%- if page.url == '/' %}
+  <script src="/assets/js/phone.js" defer></script>
+  <script src="/assets/js/form.js" defer></script>
+  {%- endif %}
 </body>
 </html>
