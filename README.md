@@ -74,7 +74,7 @@ Settings → Pages → Source: GitHub Actions. Каждый push в `main` за�
 3. Загрузить ZIP-архив из содержимого папки `function/` (без `node_modules` и `.env`). Архив собирается встроенным в Windows 10 `tar`: `Compress-Archive` из Windows PowerShell 5.1 пишет пути с обратным слешем, и в облаке функция не найдёт `core/`.
    ```powershell
    cd function
-   tar.exe -a -c -f ..unction.zip index.js core package.json package-lock.json
+   tar.exe -a -c -f ..\function.zip index.js core package.json package-lock.json
    cd ..
    ```
 4. Вписать переменные окружения по списку из `function/.env.example`.
