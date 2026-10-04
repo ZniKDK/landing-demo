@@ -24,7 +24,7 @@
   {%- endif %}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {%- if page.url == '/' %}
-  <script type="application/ld+json">{{ jsonld | dump | safe }}</script>
+  <script type="application/ld+json">{{ jsonld | jsonScript | safe }}</script>
   {%- endif %}
   <meta name="theme-color" content="{{ site.theme.primary }}">
   <link rel="stylesheet" href="/assets/css/main.css">

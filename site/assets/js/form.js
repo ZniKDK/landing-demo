@@ -9,6 +9,10 @@
   var form = document.querySelector('[data-lead-form]');
   if (!form || !window.LandingPhone) return;
 
+  // Проверку полей берём на себя (сообщения под полями), поэтому встроенную проверку браузера
+  // выключаем здесь, а не в разметке: без JavaScript она останется и сохранит введённые данные
+  form.noValidate = true;
+
   var phoneApi = window.LandingPhone;
   var phoneInput = form.elements.phone;
   var statusEl = form.querySelector('.form__status');

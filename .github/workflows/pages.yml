@@ -13,7 +13,8 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Не обрываем уже идущую публикацию — новая встанет в очередь
+  cancel-in-progress: false
 
 jobs:
   build:

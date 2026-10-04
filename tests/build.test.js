@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildPages, pageByUrl } from './helpers/build.js';
+import { jsonForScript } from '../lib/json-script.js';
 
 const site = JSON.parse(readFileSync('site/_data/site.json', 'utf8'));
 
@@ -68,4 +69,23 @@ test('форма без адреса функции не получает атр
   const html = pageByUrl(await buildPages(), '/').content;
   const formTag = html.match(/<form[^>]*data-lead-form[^>]*>/)[0];
   assert.ok(!/\saction=/.test(formTag), formTag);
+});
+
+// Ревью, Minor 1: кнопка «Записаться» в шапке должна работать и на других страницах
+test('кнопка записи в шапке ведёт на форму главной с любой страницы', async () => {
+  const privacy = pageByUrl(await buildPages(), '/privacy/').content;
+  assert.ok(privacy.includes('class="btn btn--primary header__cta" href="/#form"'));
+});
+
+// Ревью, Minor 5: без JS браузер сам проверяет обязательные поля — novalidate ставит form.js
+test('в разметке формы нет novalidate', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  assert.ok(!/<form[^>]*novalidate/.test(html));
+});
+
+// Ревью, Minor 8: "</script>" в тексте из site.json не должен закрыть тег микроразметки
+test('jsonForScript экранирует "<", JSON при этом читается как прежде', () => {
+  const out = jsonForScript({ name: 'А</script><b>' });
+  assert.ok(!out.includes('<'));
+  assert.deepEqual(JSON.parse(out), { name: 'А</script><b>' });
 });
