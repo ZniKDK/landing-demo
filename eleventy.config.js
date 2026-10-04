@@ -6,8 +6,12 @@ export default function (eleventyConfig) {
   // Добавляет префикс /landing-demo/ ко всем ссылкам вида "/..." при сборке для GitHub Pages
   eleventyConfig.addPlugin(HtmlBasePlugin);
 
-  // Файлы, которые копируются в сайт без обработки
-  eleventyConfig.addPassthroughCopy({ 'site/assets': 'assets' });
+  // Файлы, которые копируются в сайт без обработки.
+  // phone.js берём из функции — одна копия кода на браузер и сервер.
+  eleventyConfig.addPassthroughCopy({
+    'site/assets': 'assets',
+    'function/core/phone.js': 'assets/js/phone.js',
+  });
 
   // Полный адрес страницы: absUrl('/privacy/', 'https://site.ru/landing-demo/') → https://site.ru/landing-demo/privacy/
   eleventyConfig.addFilter('absUrl', (path, base) =>

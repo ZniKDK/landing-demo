@@ -1,0 +1,9 @@
+{
+  "name": "landing-demo-function",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yandex Cloud Function: приём заявок с лендинга, отправка в Telegram и на почту",
+  "type": "commonjs",
+  "main": "index.js",
+  "dependencies": {}
+}
