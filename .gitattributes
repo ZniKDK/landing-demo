@@ -1,0 +1,5 @@
+# Единые переводы строк (LF) для всех текстовых файлов — одинаково на Windows и в CI
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
