@@ -41,7 +41,7 @@ test('чужой Origin → 403, доставки нет', async () => {
 
 test('GET → 405', async () => {
   const { handle } = setup();
-  assert.equal((await handle({ httpMethod: 'GET', headers: ORIGIN })).statusCode, 405);
+  assert.equal((await handle({ httpMethod: 'GET', headers: AJAX })).statusCode, 405);
 });
 
 test('тело больше 10 КБ → 413, доставки нет', async () => {
@@ -113,4 +113,37 @@ test('тело в base64 декодируется', async () => {
   const r = await handle(post(AJAX, body, { isBase64Encoded: true }));
   assert.equal(r.statusCode, 200);
   assert.equal(delivered[0].name, 'Пётр');
+});
+
+// Ревью, Minor 3: браузер с политикой no-referrer присылает Origin: null — это не чужой сайт
+test('Origin: null обрабатывается как отсутствующий', async () => {
+  const { handle, delivered } = setup();
+  const r = await handle(post({ Origin: 'null', Accept: 'application/json' }, formBody()));
+  assert.equal(r.statusCode, 200);
+  assert.equal(delivered.length, 1);
+});
+
+// Ревью, Minor 4: ALLOWED_ORIGIN по ошибке вписали со слешем на конце
+test('ALLOWED_ORIGIN со слешем на конце не ломает проверку', async () => {
+  const delivered = [];
+  const handle = createHandler({
+    env: { ...env, ALLOWED_ORIGIN: 'https://znikdk.github.io/' },
+    deliver: async (lead) => { delivered.push(lead); return { ok: true }; },
+  });
+  const r = await handle(post(AJAX, formBody()));
+  assert.equal(r.statusCode, 200);
+  assert.equal(r.headers['Access-Control-Allow-Origin'], 'https://znikdk.github.io');
+});
+
+// Ревью, Minor 9: без JS посетитель не должен видеть голый JSON
+test('без JS: чужой Origin, не POST и слишком большое тело → 303 на #form-fail', async () => {
+  const { handle } = setup();
+  const fail = 'https://znikdk.github.io/landing-demo/#form-fail';
+  const foreign = await handle(post({ Origin: 'https://evil.example' }, formBody()));
+  assert.equal(foreign.statusCode, 303);
+  assert.equal(foreign.headers.Location, fail);
+  const big = await handle(post(ORIGIN, formBody({ comment: 'x'.repeat(MAX_BODY_BYTES) })));
+  assert.equal(big.headers.Location, fail);
+  const get = await handle({ httpMethod: 'GET', headers: ORIGIN });
+  assert.equal(get.headers.Location, fail);
 });

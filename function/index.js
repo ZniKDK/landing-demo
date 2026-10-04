@@ -44,17 +44,25 @@ function bodySize(event) {
  * подменить доставку.
  */
 function createHandler({ env, deliver }) {
-  const allowedOrigin = env.ALLOWED_ORIGIN || '';
+  // Origin всегда без слеша на конце; убираем его, если вписали по ошибке
+  const allowedOrigin = (env.ALLOWED_ORIGIN || '').replace(/\/+$/, '');
   // Адрес сайта всегда со слешем в конце: к нему добавляем "thanks/" и "#form-error"
   const siteUrl = (env.SITE_URL || '/').replace(/\/?$/, '/');
 
   return async function handle(event) {
     const origin = getHeader(event.headers, 'origin');
     const cors = allowedOrigin ? { 'Access-Control-Allow-Origin': allowedOrigin, Vary: 'Origin' } : {};
+    // form.js шлёт Accept: application/json; обычная отправка формы без JS — нет
+    const wantsJson = (getHeader(event.headers, 'accept') || '').includes('application/json');
+    // Отказ: скрипту — JSON с кодом ошибки, человеку без JS — страница с телефоном вместо голого JSON
+    const reject = (statusCode, error) => (wantsJson
+      ? jsonResponse(statusCode, { ok: false, error }, cors)
+      : redirect(siteUrl + '#form-fail'));
 
-    // Запросы с чужих сайтов не принимаем. Без Origin (curl, часть браузеров) — пропускаем, спам отсеет honeypot
-    if (origin && allowedOrigin && origin !== allowedOrigin) {
-      return jsonResponse(403, { ok: false, error: 'forbidden' });
+    // Запросы с чужих сайтов не принимаем. Без Origin (curl, часть браузеров) и с "null"
+    // (браузер скрыл источник из-за настроек приватности) — пропускаем, спам отсеет honeypot
+    if (origin && origin !== 'null' && allowedOrigin && origin !== allowedOrigin) {
+      return reject(403, 'forbidden');
     }
     if (event.httpMethod === 'OPTIONS') {
       return {
@@ -70,14 +78,12 @@ function createHandler({ env, deliver }) {
       };
     }
     if (event.httpMethod !== 'POST') {
-      return jsonResponse(405, { ok: false, error: 'method_not_allowed' }, cors);
+      return reject(405, 'method_not_allowed');
     }
     if (bodySize(event) > MAX_BODY_BYTES) {
-      return jsonResponse(413, { ok: false, error: 'too_large' }, cors);
+      return reject(413, 'too_large');
     }
 
-    // form.js шлёт Accept: application/json; обычная отправка формы без JS — нет
-    const wantsJson = (getHeader(event.headers, 'accept') || '').includes('application/json');
     const fields = parseForm(event.body, event.isBase64Encoded);
     const result = validateLead(fields, { services });
 
