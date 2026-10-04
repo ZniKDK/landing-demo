@@ -5,5 +5,7 @@
   "description": "Yandex Cloud Function: приём заявок с лендинга, отправка в Telegram и на почту",
   "type": "commonjs",
   "main": "index.js",
-  "dependencies": {}
+  "dependencies": {
+    "nodemailer": "10.0.11"
+  }
 }
