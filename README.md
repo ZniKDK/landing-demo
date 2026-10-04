@@ -71,9 +71,11 @@ Settings → Pages → Source: GitHub Actions. Каждый push в `main` за�
 ### Функция в Yandex Cloud
 1. Cloud Functions → Создать функцию → сделать её публичной.
 2. Создать версию: среда `nodejs22`, точка входа `index.handler`, тайм-аут 20 с, память 128 МБ.
-3. Загрузить ZIP-архив из содержимого папки `function/` (без `node_modules` и `.env`):
+3. Загрузить ZIP-архив из содержимого папки `function/` (без `node_modules` и `.env`). Архив собирается встроенным в Windows 10 `tar`: `Compress-Archive` из Windows PowerShell 5.1 пишет пути с обратным слешем, и в облаке функция не найдёт `core/`.
    ```powershell
-   Compress-Archive -Path function\index.js, function\core, function\package.json, function\package-lock.json -DestinationPath function.zip -Force
+   cd function
+   tar.exe -a -c -f ..unction.zip index.js core package.json package-lock.json
+   cd ..
    ```
 4. Вписать переменные окружения по списку из `function/.env.example`.
 5. Адрес функции (`https://functions.yandexcloud.net/<id>`) записать в `form.endpoint` в `site.json`.
