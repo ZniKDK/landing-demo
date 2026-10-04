@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- set pageTitle = title or site.seo.title %}
+  {%- set pageDescription = description or site.seo.description %}
+  <title>{{ pageTitle }}</title>
+  <meta name="description" content="{{ pageDescription }}">
+</head>
+<body>
+  <div class="demo-notice" role="note">{{ site.demoNotice }}</div>
+  <main id="main">{{ content | safe }}</main>
+</body>
+</html>
