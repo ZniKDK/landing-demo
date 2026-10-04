@@ -89,3 +89,10 @@ test('jsonForScript экранирует "<", JSON при этом читает�
   assert.ok(!out.includes('<'));
   assert.deepEqual(JSON.parse(out), { name: 'А</script><b>' });
 });
+
+test('первый экран: фото с размерами и приоритетом, og:image для соцсетей', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  assert.match(html, /<img src="\/assets\/img\/hero-800\.webp"[^>]*width="800" height="600"[^>]*fetchpriority="high"/);
+  assert.ok(html.includes('hero-1600.webp 1600w'));
+  assert.ok(html.includes(`<meta property="og:image" content="${site.url}assets/img/og.jpg">`));
+});

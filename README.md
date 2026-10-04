@@ -92,3 +92,7 @@ tests/           тесты
 scripts/         синхронизация списка услуг
 lib/             вспомогательные функции сборки
 ```
+
+## Фото
+
+Фото на первом экране: [Lex](https://unsplash.com/@lex_living) на [Unsplash](https://unsplash.com/photos/mechanic-using-impact-wrench-on-car-wheel-u49lt6K02e0), Unsplash License.
