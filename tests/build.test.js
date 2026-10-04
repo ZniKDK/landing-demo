@@ -25,7 +25,7 @@ test('главная содержит все секции из site.sections в 
 
 test('форма: все поля, honeypot, согласие, варианты услуг', async () => {
   const html = pageByUrl(await buildPages(), '/').content;
-  for (const name of ['name', 'phone', 'car', 'service', 'when', 'comment', 'consent', 'website', 'ts']) {
+  for (const name of ['name', 'phone', 'car', 'service', 'when', 'comment', 'consent', 'website', 'elapsed']) {
     assert.ok(html.includes(`name="${name}"`), `нет поля ${name}`);
   }
   for (const s of site.services) assert.ok(html.includes(`value="${s.id}"`), s.id);

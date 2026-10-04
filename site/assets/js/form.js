@@ -24,8 +24,9 @@
     consent: 'Нужно согласие на обработку данных'
   };
 
-  // Время открытия формы: сервер отсеет отправку быстрее 3 секунд (так делают боты)
-  form.elements.ts.value = String(Date.now());
+  // Момент открытия формы. При отправке передаём, сколько она была открыта:
+  // сервер отсеет заполнение быстрее 3 секунд (так делают боты)
+  var openedAt = Date.now();
 
   // Маска телефона при вводе
   phoneInput.addEventListener('input', function () {
@@ -85,6 +86,8 @@
       statusEl.textContent = 'Демо-режим: обработчик заявок не подключён.';
       return;
     }
+
+    form.elements.elapsed.value = String(Date.now() - openedAt);
 
     // Блокируем кнопку, чтобы двойной клик не создал две заявки
     submitBtn.disabled = true;

@@ -56,8 +56,8 @@
         <label for="f-website">Сайт</label>
         <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
-      {#- Время открытия формы — заполняет form.js #}
-      <input type="hidden" name="ts" value="">
+      {#- Сколько миллисекунд форма была открыта — заполняет form.js при отправке #}
+      <input type="hidden" name="elapsed" value="">
 
       <div class="field field--check">
         <input id="f-consent" name="consent" type="checkbox" value="yes" required aria-describedby="f-consent-error">

@@ -6,8 +6,6 @@ const { normalizePhone } = require('./phone');
 
 // Быстрее 3 секунд форму заполняет только бот
 const MIN_FILL_MS = 3000;
-// Форма, открытая больше суток назад, — подозрительно (повтор старого запроса)
-const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
 
 // Ограничения длины: [минимум, максимум]
 const LIMITS = {
@@ -46,15 +44,15 @@ function parseForm(body, isBase64Encoded) {
   return Object.fromEntries(new URLSearchParams(text));
 }
 
-function isSpam(fields, now) {
+function isSpam(fields) {
   // Скрытое поле видят только боты — человек его не заполнит
   if (singleLine(fields.website) !== '') return true;
-  // Без JavaScript поле ts пустое — проверку времени пропускаем, honeypot остаётся
-  if (!fields.ts) return false;
-  const ts = Number(fields.ts);
-  if (!Number.isFinite(ts)) return true;
-  const age = now - ts;
-  return age < MIN_FILL_MS || age > MAX_FORM_AGE_MS;
+  // Без JavaScript поле elapsed пустое — проверку времени пропускаем, honeypot остаётся
+  if (!fields.elapsed) return false;
+  // elapsed — сколько миллисекунд форма была открыта. Считает браузер (разность двух его же
+  // отметок времени), поэтому сбитые часы телефона и вкладка, открытая вчера, не мешают
+  const elapsed = Number(fields.elapsed);
+  return !Number.isFinite(elapsed) || elapsed < MIN_FILL_MS;
 }
 
 function checkLength(errors, field, value) {
@@ -68,8 +66,8 @@ function checkLength(errors, field, value) {
  * Проверяет заявку.
  * @returns {{status:'ok', lead:object} | {status:'spam'} | {status:'invalid', errors:object}}
  */
-function validateLead(fields, { services, now }) {
-  if (isSpam(fields, now)) {
+function validateLead(fields, { services }) {
+  if (isSpam(fields)) {
     return { status: 'spam' };
   }
 
@@ -101,4 +99,4 @@ function validateLead(fields, { services, now }) {
   };
 }
 
-module.exports = { parseForm, validateLead, MIN_FILL_MS, MAX_FORM_AGE_MS };
+module.exports = { parseForm, validateLead, MIN_FILL_MS };

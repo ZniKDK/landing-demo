@@ -4,15 +4,14 @@ import validate from '../function/core/validate.js';
 
 const { parseForm, validateLead } = validate;
 
-const NOW = 1_700_000_000_000;
 const services = [{ id: 'tire-change', name: 'Шиномонтаж' }, { id: 'other', name: 'Другое' }];
-const opts = { services, now: NOW };
+const opts = { services };
 
 // Корректная заявка; каждый тест портит одно поле
 function validFields() {
   return {
     name: 'Иван', phone: '8 (999) 123-45-67', car: 'Kia Rio', service: 'tire-change',
-    when: 'завтра утром', comment: '', consent: 'yes', website: '', ts: String(NOW - 10_000),
+    when: 'завтра утром', comment: '', consent: 'yes', website: '', elapsed: '10000',
   };
 }
 
@@ -38,17 +37,23 @@ test('ошибки полей', () => {
   }
 });
 
-test('спам: honeypot, слишком быстро, слишком старая форма, мусор в ts', () => {
-  for (const patch of [{ website: 'http://spam' }, { ts: String(NOW - 1000) },
-    { ts: String(NOW - 25 * 3600 * 1000) }, { ts: 'abc' }]) {
+test('спам: honeypot, заполнено быстрее 3 секунд, мусор во времени', () => {
+  for (const patch of [{ website: 'http://spam' }, { elapsed: '1000' }, { elapsed: '-5' }, { elapsed: 'abc' }]) {
     assert.equal(validateLead({ ...validFields(), ...patch }, opts).status, 'spam', JSON.stringify(patch));
   }
 });
 
-// На что смотреть №1: без JS поля ts нет — заявка должна дойти
-test('нет поля ts (отправка без JS) → не спам', () => {
+// Ревью, Important 2: время считается в браузере (Date.now() − момент открытия),
+// поэтому сбитые часы телефона и вкладка, открытая вчера, не превращают заявку в «спам»
+test('долго открытая форма (сутки и больше) → не спам', () => {
+  const r = validateLead({ ...validFields(), elapsed: String(3 * 24 * 3600 * 1000) }, opts);
+  assert.equal(r.status, 'ok');
+});
+
+// На что смотреть №1: без JS поле elapsed пустое — заявка должна дойти
+test('нет поля elapsed (отправка без JS) → не спам', () => {
   const fields = validFields();
-  delete fields.ts;
+  delete fields.elapsed;
   assert.equal(validateLead(fields, opts).status, 'ok');
 });
 

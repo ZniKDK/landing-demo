@@ -4,7 +4,6 @@ import fn from '../function/index.js';
 
 const { createHandler, MAX_BODY_BYTES } = fn;
 
-const NOW = 1_700_000_000_000;
 const env = { ALLOWED_ORIGIN: 'https://znikdk.github.io', SITE_URL: 'https://znikdk.github.io/landing-demo' };
 const ORIGIN = { Origin: 'https://znikdk.github.io' };
 const AJAX = { ...ORIGIN, Accept: 'application/json' };
@@ -12,14 +11,14 @@ const AJAX = { ...ORIGIN, Accept: 'application/json' };
 function formBody(patch = {}) {
   return new URLSearchParams({
     name: 'Иван', phone: '+7 (999) 123-45-67', service: 'tire-change', consent: 'yes',
-    website: '', ts: String(NOW - 10_000), ...patch,
+    website: '', elapsed: '10000', ...patch,
   }).toString();
 }
 
 // Обработчик с поддельной доставкой: запоминает заявки, результат задаётся тестом
 function setup(result = { ok: true, channel: 'telegram' }) {
   const delivered = [];
-  const handle = createHandler({ env, now: () => NOW, deliver: async (lead) => { delivered.push(lead); return result; } });
+  const handle = createHandler({ env, deliver: async (lead) => { delivered.push(lead); return result; } });
   return { handle, delivered };
 }
 

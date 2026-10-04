@@ -41,9 +41,9 @@ function bodySize(event) {
 
 /**
  * Создаёт обработчик. Зависимости передаются снаружи, чтобы в тестах
- * подменить доставку и время.
+ * подменить доставку.
  */
-function createHandler({ env, deliver, now = Date.now }) {
+function createHandler({ env, deliver }) {
   const allowedOrigin = env.ALLOWED_ORIGIN || '';
   // Адрес сайта всегда со слешем в конце: к нему добавляем "thanks/" и "#form-error"
   const siteUrl = (env.SITE_URL || '/').replace(/\/?$/, '/');
@@ -79,7 +79,7 @@ function createHandler({ env, deliver, now = Date.now }) {
     // form.js шлёт Accept: application/json; обычная отправка формы без JS — нет
     const wantsJson = (getHeader(event.headers, 'accept') || '').includes('application/json');
     const fields = parseForm(event.body, event.isBase64Encoded);
-    const result = validateLead(fields, { services, now: now() });
+    const result = validateLead(fields, { services });
 
     if (result.status === 'spam') {
       // Боту отвечаем «успехом», чтобы он не подбирал обход
