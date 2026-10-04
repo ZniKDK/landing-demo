@@ -20,9 +20,20 @@ function createMailSender({ host, port, user, pass, to, timeoutMs = 8000, create
       connectionTimeout: timeoutMs,
       greetingTimeout: timeoutMs,
       socketTimeout: timeoutMs,
+      dnsTimeout: timeoutMs, // по умолчанию у nodemailer 30 с — дольше, чем живёт функция
     });
-    // Яндекс разрешает отправку только от имени того же ящика, что и логин
-    await transport.sendMail({ from: user, to, subject, text });
+    // Эти тайм-ауты считают простой между шагами, а не общее время отправки.
+    // Поэтому ограничиваем всю отправку целиком: Telegram 5 с + почта 8 с < 20 с функции
+    let timer;
+    const deadline = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`SMTP не ответил за ${timeoutMs} мс`)), timeoutMs);
+    });
+    try {
+      // Яндекс разрешает отправку только от имени того же ящика, что и логин
+      await Promise.race([transport.sendMail({ from: user, to, subject, text }), deadline]);
+    } finally {
+      clearTimeout(timer); // иначе таймер держал бы процесс ещё 8 секунд
+    }
   };
 }
 

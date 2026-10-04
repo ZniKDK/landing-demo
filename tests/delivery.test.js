@@ -105,3 +105,23 @@ test('deliver: Telegram завис → после тайм-аута уходит
   const r = await deliver(lead, { siteName: 'Т', sendTelegram, sendMail: async () => {} });
   assert.deepEqual(r, { ok: true, channel: 'email' });
 });
+
+// Ревью, Important 3: тайм-ауты nodemailer считают простой между командами, а не общее время.
+// Общий лимит не даёт функции выйти за 20 секунд Yandex Cloud
+test('Почта: зависший SMTP прерывается по общему лимиту времени', async () => {
+  const send = createMailSender({
+    host: 'h', port: '465', user: 'u', pass: 'p', to: 't', timeoutMs: 50,
+    createTransport: () => ({ sendMail: () => new Promise(() => {}) }),
+  });
+  await assert.rejects(send({ subject: 's', text: 't' }), /не ответил/);
+});
+
+test('Почта: DNS-запрос тоже ограничен тайм-аутом', async () => {
+  let options;
+  const send = createMailSender({
+    host: 'h', port: '465', user: 'u', pass: 'p', to: 't',
+    createTransport: (o) => { options = o; return { sendMail: async () => {} }; },
+  });
+  await send({ subject: 's', text: 't' });
+  assert.equal(options.dnsTimeout, 8000);
+});
