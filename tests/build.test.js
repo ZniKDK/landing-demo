@@ -90,9 +90,26 @@ test('jsonForScript экранирует "<", JSON при этом читает�
   assert.deepEqual(JSON.parse(out), { name: 'А</script><b>' });
 });
 
-test('первый экран: фото с размерами и приоритетом, og:image для соцсетей', async () => {
+test('первый экран: колесо нарисовано SVG, табло и og:image для соцсетей', async () => {
   const html = pageByUrl(await buildPages(), '/').content;
-  assert.match(html, /<img src="\/assets\/img\/hero-800\.webp"[^>]*width="800" height="600"[^>]*fetchpriority="high"/);
-  assert.ok(html.includes('hero-1600.webp 1600w'));
+  const hero = html.slice(html.indexOf('id="hero"'), html.indexOf('id="calc"'));
+  assert.match(hero, /<svg class="wheel"[^>]*role="img"/);
+  assert.ok(hero.includes('data-board'), 'нет табло пит-стопа');
   assert.ok(html.includes(`<meta property="og:image" content="${site.url}assets/img/og.jpg">`));
+});
+
+test('калькулятор и маркировка получают данные из site.json', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  const calc = JSON.parse(html.match(/<script type="application\/json" id="calc-data">(.+?)<\/script>/s)[1]);
+  assert.deepEqual(calc, site.calc);
+  const tyre = JSON.parse(html.match(/<script type="application\/json" id="tyre-data">(.+?)<\/script>/s)[1]);
+  assert.deepEqual(tyre, site.tyre);
+  for (const v of site.calc.vehicles) assert.ok(html.includes(`value="${v.id}"`), v.id);
+});
+
+test('цвета обеих тем попадают в CSS-переменные', async () => {
+  const html = pageByUrl(await buildPages(), '/').content;
+  assert.ok(html.includes(`--c-accent: ${site.theme.light.accent};`));
+  assert.ok(html.includes(':root[data-theme=dark]'));
+  assert.ok(html.includes(`--c-accent: ${site.theme.dark.accent};`));
 });

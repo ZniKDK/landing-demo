@@ -1,12 +1,15 @@
-<section class="section" id="services" aria-labelledby="services-title">
+{#- Прайс в виде табло пит-стопа: строки «загораются» по очереди при прокрутке #}
+<section class="section section--alt" id="services" aria-labelledby="services-title">
   <div class="container">
+    <p class="kicker">Все услуги</p>
     <h2 id="services-title">{{ site.sectionTitles.services }}</h2>
-    <ul class="cards">
+    <ul class="price" role="list">
       {%- for service in site.services %}
-      <li class="card">
-        <h3 class="card__title">{{ service.name }}</h3>
-        <p class="card__price">{{ service.price }}</p>
-        {%- if service.time %}<p class="card__meta">{{ service.time }}</p>{% endif %}
+      <li class="price__row reveal" style="--i: {{ loop.index0 }}">
+        <span class="price__pos mono">P{{ loop.index }}</span>
+        <span class="price__name">{{ service.name }}</span>
+        <span class="price__time mono">{{ service.time or '—' }}</span>
+        <span class="price__value">{{ service.price }}</span>
       </li>
       {%- endfor %}
     </ul>

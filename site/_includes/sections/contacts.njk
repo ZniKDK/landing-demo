@@ -1,13 +1,32 @@
 {% from "partials/icons.njk" import icon %}
 <section class="section" id="contacts" aria-labelledby="contacts-title">
-  <div class="container">
-    <h2 id="contacts-title">{{ site.sectionTitles.contacts }}</h2>
-    <div class="contacts">
+  <div class="container contacts">
+    <div>
+      <p class="kicker">Как доехать</p>
+      <h2 id="contacts-title">{{ site.sectionTitles.contacts }}</h2>
       <p class="contacts__row">{{ icon('pin', 22) }}<span>{{ site.contact.city }}, {{ site.contact.street }}</span></p>
       <p class="contacts__row">{{ icon('clock', 22) }}<span>{{ site.contact.hours }}</span></p>
       <p class="contacts__row">{{ icon('phone', 22) }}<a href="tel:{{ site.contact.phone }}">{{ site.contact.phoneDisplay }}</a></p>
       {#- Ссылка вместо встроенной карты: iframe карты тяжёлый и тормозит загрузку на телефоне #}
       <a class="btn btn--outline" href="{{ site.contact.mapUrl }}" target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
     </div>
+    {#- Схема проезда, нарисованная кодом: дороги, маршрут «прорисовывается» при появлении на экране #}
+    <svg class="map reveal" viewBox="0 0 520 360" role="img" aria-label="Схема проезда: {{ site.contact.street }}">
+      <rect width="520" height="360" rx="24" fill="var(--c-surface2)"/>
+      <g fill="var(--c-surface)">
+        <rect x="30" y="30" width="150" height="90" rx="10"/><rect x="220" y="30" width="120" height="90" rx="10"/>
+        <rect x="380" y="30" width="110" height="160" rx="10"/><rect x="30" y="160" width="150" height="170" rx="10"/>
+        <rect x="220" y="160" width="120" height="70" rx="10"/><rect x="220" y="270" width="270" height="60" rx="10"/>
+      </g>
+      <g fill="none" stroke="var(--c-line)" stroke-width="14" stroke-linecap="round">
+        <path d="M0 140H520M200 0V360M360 0V250M200 250H520"/>
+      </g>
+      <path class="map__route" d="M0 140H200V250H300" fill="none" stroke="var(--c-accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 10"/>
+      <g transform="translate(300 250)">
+        <circle class="map__pulse" r="22" fill="var(--c-accent)" opacity=".25"/>
+        <circle r="11" fill="var(--c-accent)"/><circle r="4" fill="#fff"/>
+      </g>
+      <text class="map__label" x="318" y="236">{{ site.name }}</text>
+    </svg>
   </div>
 </section>

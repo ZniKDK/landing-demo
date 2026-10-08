@@ -1,0 +1,46 @@
+{#-
+  Колесо, нарисованное кодом (SVG): шина с протектором, надпись на боковине, тормозной диск,
+  суппорт и пятиспицевый диск. Группы .wheel__spin вращает app.js; суппорт стоит на месте, как у настоящей машины.
+  id — префикс для градиентов, чтобы два колеса на странице не путали свои определения.
+#}
+{% macro wheel(id, label) %}
+<svg class="wheel" viewBox="-200 -200 400 400" role="img" aria-label="{{ label }}">
+  <defs>
+    <linearGradient id="{{ id }}-rim" x1="0" y1="-1" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--rim-hi)"/>
+      <stop offset="1" stop-color="var(--rim-lo)"/>
+    </linearGradient>
+    <path id="{{ id }}-arc" d="M0 -150a150 150 0 1 1 0 300a150 150 0 1 1 0 -300"/>
+  </defs>
+  <g class="wheel__spin">
+    <circle r="197" fill="var(--tire)"/>
+    {#- Протектор: 40 блоков по кругу #}
+    {%- for i in range(0, 40) %}
+    <rect x="-8" y="-199" width="16" height="24" rx="3" fill="var(--tread)" transform="rotate({{ i * 9 }})"/>
+    {%- endfor %}
+    <circle r="172" fill="none" stroke="var(--tread)" stroke-width="2"/>
+    <text class="wheel__text" font-size="15"><textPath href="#{{ id }}-arc" textLength="935" lengthAdjust="spacing">{{ site.name | upper }} · 205/55 R16 91V · ПИТ-СТОП · {{ site.name | upper }} · 205/55 R16 91V · ПИТ-СТОП ·</textPath></text>
+    <circle r="127" fill="var(--barrel)"/>
+    <circle r="104" fill="var(--disc)"/>
+    {#- Перфорация тормозного диска #}
+    {%- for i in range(0, 18) %}
+    <circle cx="0" cy="-84" r="4" fill="var(--barrel)" transform="rotate({{ i * 20 }})"/>
+    {%- endfor %}
+    <circle r="56" fill="var(--barrel)"/>
+  </g>
+  {#- Суппорт не вращается #}
+  <rect class="wheel__caliper" x="74" y="-30" width="40" height="60" rx="14" fill="var(--c-accent)" transform="rotate(-38)"/>
+  <g class="wheel__spin">
+    {%- for i in range(0, 5) %}
+    <path d="M-11 -30L-24 -118H24L11 -30Z" fill="url(#{{ id }}-rim)" transform="rotate({{ i * 72 }})"/>
+    <path d="M0 -36V-112" stroke="var(--rim-lo)" stroke-width="2" transform="rotate({{ i * 72 }})"/>
+    {%- endfor %}
+    <circle r="122" fill="none" stroke="url(#{{ id }}-rim)" stroke-width="10"/>
+    <circle r="34" fill="url(#{{ id }}-rim)"/>
+    {%- for i in range(0, 5) %}
+    <circle cx="0" cy="-20" r="5" fill="var(--rim-lo)" transform="rotate({{ i * 72 + 36 }})"/>
+    {%- endfor %}
+    <circle r="10" fill="var(--c-accent)"/>
+  </g>
+</svg>
+{% endmacro %}

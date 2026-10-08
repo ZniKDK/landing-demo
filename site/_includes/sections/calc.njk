@@ -1,0 +1,64 @@
+{% from "partials/wheel.njk" import wheel with context %}
+{#- Калькулятор переобувки. Цены и коэффициенты — в site.calc, считает app.js.
+    Без JavaScript видна таблица «Прайс» ниже, поэтому калькулятор показывается только с JS (класс .js на <html>) #}
+<section class="section calc-section" id="calc" aria-labelledby="calc-title">
+  <div class="container">
+    <p class="kicker">Калькулятор</p>
+    <h2 id="calc-title">{{ site.sectionTitles.calc }}</h2>
+    <p class="lead">{{ site.calc.lead }}</p>
+
+    <div class="calc" data-calc>
+      <div class="calc__controls">
+        <fieldset class="calc__group">
+          <legend>Машина</legend>
+          <div class="seg" role="radiogroup">
+            {%- for v in site.calc.vehicles %}
+            <label class="seg__item">
+              <input type="radio" name="vehicle" value="{{ v.id }}"{% if loop.first %} checked{% endif %}>
+              <span>{{ v.name }}</span>
+            </label>
+            {%- endfor %}
+          </div>
+        </fieldset>
+
+        <div class="calc__group">
+          <label class="calc__label" for="radius">Диаметр диска: <b class="mono" data-radius-out>R{{ site.calc.radius.default }}</b></label>
+          <input class="range" type="range" id="radius" name="radius"
+                 min="{{ site.calc.radius.min }}" max="{{ site.calc.radius.max }}" value="{{ site.calc.radius.default }}" step="1">
+          <div class="ticks mono" aria-hidden="true">
+            {%- for r in range(site.calc.radius.min, site.calc.radius.max + 1) %}<span>{{ r }}</span>{% endfor %}
+          </div>
+        </div>
+
+        <fieldset class="calc__group">
+          <legend>Что сделать</legend>
+          <label class="check check--locked">
+            <input type="checkbox" checked disabled>
+            <span class="check__box" aria-hidden="true"></span>
+            <span class="check__text"><b>Шиномонтаж, 4 колеса</b><small>снять, переобуть, поставить</small></span>
+          </label>
+          {%- for e in site.calc.extras %}
+          <label class="check">
+            <input type="checkbox" name="extra" value="{{ e.id }}"{% if e.on %} checked{% endif %}>
+            <span class="check__box" aria-hidden="true"></span>
+            <span class="check__text"><b>{{ e.name }}</b><small>{{ e.hint }}</small></span>
+          </label>
+          {%- endfor %}
+        </fieldset>
+      </div>
+
+      <div class="calc__result">
+        <div class="calc__wheel" data-calc-wheel>{{ wheel('calc', 'Размер колеса меняется вместе с диаметром') }}</div>
+        <div class="pitboard">
+          <p class="pitboard__row"><span>Итого</span><span class="pitboard__price"><b class="mono" data-calc-price>0</b> ₽</span></p>
+          <p class="pitboard__row pitboard__row--time"><span>Время в боксе</span><span class="mono">≈ <b data-calc-time>0</b> мин</span></p>
+          <ul class="pitboard__lines mono" data-calc-lines role="list"></ul>
+          <a class="btn btn--primary btn--block" href="#form" data-calc-cta>{{ site.calc.cta }}</a>
+          <p class="pitboard__note">{{ site.calc.note }}</p>
+        </div>
+      </div>
+    </div>
+    {#- Данные калькулятора для app.js (безопасный JSON, как и микроразметка) #}
+    <script type="application/json" id="calc-data">{{ site.calc | jsonScript | safe }}</script>
+  </div>
+</section>

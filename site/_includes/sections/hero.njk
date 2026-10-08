@@ -1,23 +1,31 @@
+{% from "partials/wheel.njk" import wheel with context %}
 <section class="hero" id="hero" aria-labelledby="hero-title">
   <div class="container hero__inner">
     <div class="hero__text">
-      <h1 id="hero-title">{{ site.hero.title }}</h1>
+      <p class="kicker">{{ site.hero.kicker }}</p>
+      <h1 id="hero-title" class="hero__title">{{ site.hero.title }}</h1>
       <p class="hero__subtitle">{{ site.hero.subtitle }}</p>
-      <a class="btn btn--primary btn--lg" href="#form">{{ site.hero.cta }}</a>
-      <ul class="hero__facts">
+      <div class="hero__cta">
+        <a class="btn btn--primary btn--lg" href="#form">{{ site.hero.cta }}</a>
+        <a class="btn btn--outline btn--lg" href="#calc">{{ site.hero.cta2 }}</a>
+      </div>
+      <ul class="hero__facts" role="list">
         {%- for fact in site.hero.facts %}
         <li>{{ fact }}</li>
         {%- endfor %}
       </ul>
     </div>
-    {%- if site.hero.image %}
     <div class="hero__media">
-      {#- Первое фото грузится сразу (fetchpriority), браузер сам выбирает размер по ширине экрана #}
-      <img src="/{{ site.hero.image.src }}-800.webp"
-           srcset="/{{ site.hero.image.src }}-800.webp 800w, /{{ site.hero.image.src }}-1600.webp 1600w"
-           sizes="(min-width: 1024px) 50vw, 100vw"
-           width="800" height="600" alt="{{ site.hero.image.alt }}" fetchpriority="high" decoding="async">
+      {{ wheel('hero', 'Колесо с литым диском и красным суппортом') }}
+      {#- Табло пит-стопа: сколько ждать ближайшего окна. Время считает app.js по часам работы #}
+      <div class="board" data-board data-hours="{{ site.contact.hoursSchema }}"
+           data-next="{{ site.hero.board.next }}" data-closed="{{ site.hero.board.closed }}" aria-live="polite">
+        <p class="board__head"><span class="board__lamp" data-board-lamp></span>{{ site.hero.board.label }}</p>
+        <p class="board__label" data-board-label>{{ site.hero.board.next }}</p>
+        <p class="board__time mono" data-board-time>--:--</p>
+        <p class="board__foot"><b class="mono" data-board-slots>—</b> {{ site.hero.board.slotsLeft }}</p>
+      </div>
     </div>
-    {%- endif %}
   </div>
+  <div class="kerb" aria-hidden="true"></div>
 </section>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.lang }}">
+<html lang="{{ site.lang }}" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,30 +26,39 @@
   {%- if page.url == '/' %}
   <script type="application/ld+json">{{ jsonld | jsonScript | safe }}</script>
   {%- endif %}
-  <meta name="theme-color" content="{{ site.theme.primary }}">
+  <meta name="theme-color" content="{{ site.theme.dark.bg }}">
+  {#- Тема выбирается до отрисовки, чтобы страница не мигала белым.
+      Режим (как в системе / светлая / тёмная) хранится в localStorage, переключает его theme.js #}
+  <script>document.documentElement.classList.add('js');!function(){var m='system';try{m=localStorage.getItem('ls-theme')||'system'}catch(e){}var d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.dataset.themeMode=m}()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400..900;1,700..900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/main.css">
-  {#- Цвета бренда из site.json → CSS-переменные. Под нового клиента меняется только site.json #}
+  {#- Цвета бренда из site.json → CSS-переменные светлой и тёмной темы. Под нового клиента меняется только site.json #}
   <style>
-    :root {
-      --c-primary: {{ site.theme.primary }};
-      --c-primary-text: {{ site.theme.primaryText }};
-      --c-dark: {{ site.theme.dark }};
-      --c-bg: {{ site.theme.bg }};
-      --c-bg-alt: {{ site.theme.bgAlt }};
-      --c-text: {{ site.theme.text }};
-      --c-muted: {{ site.theme.muted }};
+    {%- for mode, selector in { light: ':root', dark: ':root[data-theme=dark]' } %}
+    {{ selector }} {
+      {%- for key, value in site.theme[mode] %}
+      --c-{{ key }}: {{ value }};
+      {%- endfor %}
     }
+    {%- endfor %}
   </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <div class="progress" aria-hidden="true"></div>
   {% include "partials/demo-notice.njk" %}
   {% include "partials/header.njk" %}
   <main id="main">{{ content | safe }}</main>
   {% include "partials/footer.njk" %}
+  <script src="/assets/js/theme.js" defer></script>
   {%- if page.url == '/' %}
+  <script src="/assets/js/motion.js" defer></script>
   <script src="/assets/js/phone.js" defer></script>
   <script src="/assets/js/form.js" defer></script>
+  <script src="/assets/js/app.js" defer></script>
   {%- endif %}
 </body>
 </html>

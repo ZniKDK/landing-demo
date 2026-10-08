@@ -1,12 +1,20 @@
+{#- Отзывы: модель машины оформлена как табличка, звёзды — SVG #}
 <section class="section section--alt" id="reviews" aria-labelledby="reviews-title">
   <div class="container">
-    <h2 id="reviews-title">{{ site.sectionTitles.reviews }}</h2>
-    <ul class="reviews">
+    <div class="reviews__head">
+      <div>
+        <p class="kicker">Отзывы</p>
+        <h2 id="reviews-title">{{ site.sectionTitles.reviews }}</h2>
+      </div>
+      <p class="rating"><b>{{ site.reviewsRating.value }}</b><span>{{ site.reviewsRating.text }}</span></p>
+    </div>
+    <ul class="reviews" role="list">
       {%- for review in site.reviews %}
-      <li>
+      <li class="reveal" style="--i: {{ loop.index0 }}">
         <figure class="review">
+          <p class="stars" aria-label="5 из 5">{% for s in range(0, 5) %}<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>{% endfor %}</p>
           <blockquote><p>{{ review.text }}</p></blockquote>
-          <figcaption>{{ review.name }}, {{ review.car }}</figcaption>
+          <figcaption><span>{{ review.name }}</span><span class="plate mono">{{ review.car }}</span></figcaption>
         </figure>
       </li>
       {%- endfor %}

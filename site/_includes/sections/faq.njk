@@ -1,11 +1,12 @@
+{#- details/summary раскрываются и без JavaScript; с JS — плавно (Motion.accordion) #}
 <section class="section" id="faq" aria-labelledby="faq-title">
   <div class="container container--narrow">
+    <p class="kicker">Вопросы</p>
     <h2 id="faq-title">{{ site.sectionTitles.faq }}</h2>
-    {#- details/summary раскрываются без JavaScript #}
     {%- for item in site.faq %}
     <details class="faq">
-      <summary>{{ item.q }}</summary>
-      <p>{{ item.a }}</p>
+      <summary>{{ item.q }}<span class="faq__icon" aria-hidden="true"></span></summary>
+      <div class="acc-body"><p>{{ item.a }}</p></div>
     </details>
     {%- endfor %}
   </div>

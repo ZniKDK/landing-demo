@@ -1,10 +1,13 @@
 {% from "partials/icons.njk" import icon %}
+{#- Преимущества — карточки с крупным номером и подсветкой под курсором (Motion.spotlight) #}
 <section class="section section--alt" id="benefits" aria-labelledby="benefits-title">
   <div class="container">
+    <p class="kicker">Почему мы</p>
     <h2 id="benefits-title">{{ site.sectionTitles.benefits }}</h2>
-    <ul class="features">
+    <ul class="features" role="list">
       {%- for item in site.benefits %}
-      <li class="feature">
+      <li class="feature reveal" style="--i: {{ loop.index0 }}">
+        <span class="feature__num mono">0{{ loop.index }}</span>
         <span class="feature__icon">{{ icon(item.icon) }}</span>
         <h3>{{ item.title }}</h3>
         <p>{{ item.text }}</p>

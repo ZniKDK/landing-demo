@@ -1,0 +1,59 @@
+{#- Расшифровка маркировки шины. Кнопки и подсветку переключает app.js.
+    Без JavaScript вместо интерактива показывается обычный список (.tyre__list) #}
+{%- set first = site.tyre.parts[0] %}
+<section class="section tyre-section" id="tyre" aria-labelledby="tyre-title">
+  <div class="container">
+    <p class="kicker">Ликбез</p>
+    <h2 id="tyre-title">{{ site.sectionTitles.tyre }}</h2>
+    <p class="lead">{{ site.tyre.lead }}</p>
+
+    <div class="tyre" data-tyre>
+      {#- Боковина огромной шины: надпись идёт по дуге, части маркировки — отдельные tspan #}
+      <svg class="sidewall" viewBox="0 -30 800 290" aria-hidden="true">
+        <defs>
+          <path id="tyre-arc" d="M-10 330A495 495 0 0 1 810 330"/>
+          <path id="tyre-arc2" d="M58 330A440 440 0 0 1 742 330"/>
+        </defs>
+        <path d="M-40 330A520 520 0 0 1 840 330" fill="none" stroke="var(--tire)" stroke-width="210"/>
+        <path d="M-132 330A600 600 0 0 1 932 330" fill="none" stroke="var(--tread)" stroke-width="3" stroke-dasharray="3 12"/>
+        <text class="sidewall__mark" text-anchor="middle"><textPath href="#tyre-arc" startOffset="50%">
+          {%- for p in site.tyre.parts %}<tspan{% if p.label %} data-part="{{ loop.index0 }}"{% endif %}>{{ p.t }}</tspan>{% endfor -%}
+        </textPath></text>
+        <text class="sidewall__dot mono" text-anchor="middle"><textPath href="#tyre-arc2" startOffset="50%"><tspan data-part="dot">{{ site.tyre.dot.t }}</tspan></textPath></text>
+      </svg>
+
+      <div class="tyre__chips" role="group" aria-label="Части маркировки">
+        {%- for p in site.tyre.parts %}{% if p.label %}
+        <button class="chip" type="button" data-part="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"><b class="mono">{{ p.t }}</b>{{ p.label }}</button>
+        {%- endif %}{% endfor %}
+        <button class="chip" type="button" data-part="dot" aria-pressed="false"><b class="mono">{{ site.tyre.dot.t }}</b>{{ site.tyre.dot.label }}</button>
+      </div>
+
+      <div class="tyre__panel">
+        {#- Разрез шины: стрелки ширины, высоты профиля и диаметра подсвечиваются по выбранной части #}
+        <svg class="section-cut" viewBox="0 0 260 230" aria-hidden="true">
+          <rect x="70" y="40" width="120" height="70" rx="26" fill="var(--tire)"/>
+          <rect x="70" y="150" width="120" height="70" rx="26" fill="var(--tire)"/>
+          <rect x="84" y="104" width="92" height="52" rx="6" fill="var(--rim-lo)"/>
+          <rect x="96" y="116" width="68" height="28" rx="4" fill="var(--rim-hi)"/>
+          <g class="dim" data-dim="width"><path d="M70 22H190M70 16V28M190 16V28"/><text x="130" y="12">205 мм</text></g>
+          <g class="dim" data-dim="height"><path d="M212 40V104M206 40H218M206 104H218"/><text x="226" y="76">113</text></g>
+          <g class="dim" data-dim="diameter"><path d="M44 110V150M38 110H50M38 150H50"/><text x="8" y="134">16″</text></g>
+        </svg>
+        <div class="tyre__info" aria-live="polite">
+          <p class="tyre__label" data-tyre-label>{{ first.label }}</p>
+          <p class="tyre__big" data-tyre-big>{{ first.big }}</p>
+          <p class="tyre__text" data-tyre-text>{{ first.text }}</p>
+        </div>
+      </div>
+
+      <dl class="tyre__list">
+        {%- for p in site.tyre.parts %}{% if p.label %}
+        <dt>{{ p.t }} — {{ p.label }}</dt><dd>{{ p.text }}</dd>
+        {%- endif %}{% endfor %}
+        <dt>{{ site.tyre.dot.t }} — {{ site.tyre.dot.label }}</dt><dd>{{ site.tyre.dot.text }}</dd>
+      </dl>
+    </div>
+    <script type="application/json" id="tyre-data">{{ site.tyre | jsonScript | safe }}</script>
+  </div>
+</section>

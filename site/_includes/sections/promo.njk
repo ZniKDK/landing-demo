@@ -1,9 +1,26 @@
-<section class="promo" id="promo" aria-labelledby="promo-title">
+{#- Акция: стопка шин складывается, когда блок появляется на экране (анимация в CSS, запуск — класс is-in) #}
+<section class="promo reveal" id="promo" aria-labelledby="promo-title">
+  <div class="kerb" aria-hidden="true"></div>
   <div class="container promo__inner">
-    <div>
+    <svg class="stack" viewBox="0 0 220 230" aria-hidden="true">
+      {%- for i in range(0, 4) %}
+      {#- Внешняя группа ставит шину на место в стопке, внутренняя падает сверху (CSS) #}
+      <g transform="translate(0 {{ 180 - i * 50 }})">
+        <g class="stack__tire" style="--i: {{ i }}">
+          <rect x="10" y="0" width="200" height="46" rx="14" fill="var(--tire)"/>
+          {%- for k in range(0, 9) %}
+          <rect x="{{ 22 + k * 21 }}" y="6" width="10" height="34" rx="3" fill="var(--tread)"/>
+          {%- endfor %}
+        </g>
+      </g>
+      {%- endfor %}
+    </svg>
+    <div class="promo__text">
+      <p class="promo__badge mono">{{ site.promo.badge }}</p>
       <h2 id="promo-title">{{ site.promo.title }}</h2>
       <p>{{ site.promo.text }}</p>
     </div>
-    <a class="btn btn--light" href="#form">{{ site.promo.cta }}</a>
+    <a class="btn btn--light btn--lg" href="#form">{{ site.promo.cta }}</a>
   </div>
+  <div class="kerb kerb--rev" aria-hidden="true"></div>
 </section>

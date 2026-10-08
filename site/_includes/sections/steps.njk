@@ -1,9 +1,21 @@
+{#- Запись как круг по трассе: машинка едет к финишу по мере прокрутки (app.js задаёт --p от 0 до 1) #}
 <section class="section" id="steps" aria-labelledby="steps-title">
   <div class="container">
+    <p class="kicker">Как это работает</p>
     <h2 id="steps-title">{{ site.sectionTitles.steps }}</h2>
-    <ol class="steps">
+    <div class="track" data-track aria-hidden="true">
+      <div class="track__line"></div>
+      <svg class="track__car" viewBox="0 0 64 28">
+        <path d="M4 20h56l-4-8-14-3-8-6H18L10 11 4 13z" fill="var(--c-accent)"/>
+        <circle cx="16" cy="21" r="6" fill="var(--tire)"/><circle cx="16" cy="21" r="2.5" fill="var(--rim-hi)"/>
+        <circle cx="48" cy="21" r="6" fill="var(--tire)"/><circle cx="48" cy="21" r="2.5" fill="var(--rim-hi)"/>
+      </svg>
+      <div class="track__flag"></div>
+    </div>
+    <ol class="steps" role="list">
       {%- for step in site.steps %}
-      <li class="step">
+      <li class="step reveal" style="--i: {{ loop.index0 }}">
+        <span class="step__sector mono">S{{ loop.index }}</span>
         <h3>{{ step.title }}</h3>
         <p>{{ step.text }}</p>
       </li>
